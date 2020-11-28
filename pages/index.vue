@@ -6,7 +6,7 @@
           <v-col cols="12" sm="3">
             <v-sheet rounded="lg" min-height="268">
               <v-card-title>{{ fullName }}</v-card-title>
-              <v-card-subtitle>{{ username }}</v-card-subtitle>
+              <v-card-subtitle>{{ userName }}</v-card-subtitle>
               <v-card-text>{{ userInterfaceText }}</v-card-text>
               <v-card-subtitle class="font-weight-medium pad-marg-top"
                 >Follower: {{ countFollower }}</v-card-subtitle
@@ -34,12 +34,11 @@
                     value="chat your Alike."
                     counter
                     :rules="[rules.textarea]"
-                    v-model="textArea"
+                    v-model="textAreaInput"
                   ></v-textarea>
                   <v-card-actions>
                     <v-btn
-                      @click="sendTextArea"
-                      :loading="isLoading"
+                      @click="createNewText"
                       class="white--text"
                       color="deep-purple accent-4"
                       depressed
@@ -55,6 +54,13 @@
           <v-col cols="12" sm="3">
             <v-sheet rounded="lg" min-height="800">
               
+              <ChatText 
+              v-for="text in textArea"
+              :key="text.id"
+              :textArea="text"
+              :userName="userName"
+              />
+              
             </v-sheet>
           </v-col>
         </v-row>
@@ -69,19 +75,20 @@ export default {
     links: ["Dashboard", "Messages", "Profile", "Updates"],
     firstName: "Wilhelm",
     lastName: "Kampelmann",
+    userName: '@_WilhelmKampelmann',
     userInterfaceText: "Hello Vellas and felllows, im fellah",
     countFollower: 0,
     countLikes: 0,
-    textArea: "",
+    textAreaInput: '',
+    textArea: [
+      {id: 1, content: 'Hi i am a String'},
+      {id: 2, content: 'Hi i am a String too'},
+    ],
     rules: {
-      textarea: (v) => !!(v || ""),
+      textarea: (v) => !!(v || ''),
     },
-    isLoading: false,
   }),
   computed: {
-    username: function () {
-      return "@" + this.fullName;
-    },
     fullName: function () {
       return this.firstName + " " + this.lastName;
     },
@@ -93,7 +100,13 @@ export default {
     addLike() {
       this.countLikes++;
     },
-    sendTextArea() {
+    createNewText() {
+      this.textArea.unshift(
+        {
+          id: this.textArea.length + 1,
+          content: this.textAreaInput,
+        }
+      );
       console.log(this.textArea);
     },
   },
